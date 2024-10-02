@@ -1,16 +1,16 @@
 package com.example.nexttrip.repository
 
 import com.example.nexttrip.model.*
-import com.example.nexttrip.model.dto.BookingData
-import com.example.nexttrip.model.dto.CarData
-import com.example.nexttrip.model.dto.LocationData
-import com.example.nexttrip.model.entity.BookingEntity
-import com.example.nexttrip.model.entity.CarEntity
-import com.example.nexttrip.model.entity.LocationEntity
-import com.example.nexttrip.model.entity.RouteEntity
-import com.example.nexttrip.model.tables.Cars
-import com.example.nexttrip.model.tables.Location
-import com.example.nexttrip.model.tables.Routes
+import com.example.nexttrip.model.dto.car.BookingData
+import com.example.nexttrip.model.dto.car.CarData
+import com.example.nexttrip.model.dto.car.LocationData
+import com.example.nexttrip.model.entity.car.BookingEntity
+import com.example.nexttrip.model.entity.car.CarEntity
+import com.example.nexttrip.model.entity.car.LocationEntity
+import com.example.nexttrip.model.entity.car.RouteEntity
+import com.example.nexttrip.model.tables.car.Cars
+import com.example.nexttrip.model.tables.car.Location
+import com.example.nexttrip.model.tables.car.Routes
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 

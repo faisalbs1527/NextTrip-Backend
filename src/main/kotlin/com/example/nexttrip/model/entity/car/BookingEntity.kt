@@ -1,6 +1,6 @@
-package com.example.nexttrip.model.entity
+package com.example.nexttrip.model.entity.car
 
-import com.example.nexttrip.model.tables.Bookings
+import com.example.nexttrip.model.tables.car.Bookings
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

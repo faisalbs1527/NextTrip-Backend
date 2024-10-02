@@ -1,4 +1,4 @@
-package com.example.nexttrip.model.tables
+package com.example.nexttrip.model.tables.car
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 

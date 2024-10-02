@@ -1,13 +1,13 @@
 package com.example.nexttrip.model
 
-import com.example.nexttrip.model.dto.BookingData
-import com.example.nexttrip.model.dto.CarData
-import com.example.nexttrip.model.dto.LocationData
-import com.example.nexttrip.model.dto.RouteData
-import com.example.nexttrip.model.entity.BookingEntity
-import com.example.nexttrip.model.entity.CarEntity
-import com.example.nexttrip.model.entity.LocationEntity
-import com.example.nexttrip.model.entity.RouteEntity
+import com.example.nexttrip.model.dto.car.BookingData
+import com.example.nexttrip.model.dto.car.CarData
+import com.example.nexttrip.model.dto.car.LocationData
+import com.example.nexttrip.model.dto.car.RouteData
+import com.example.nexttrip.model.entity.car.BookingEntity
+import com.example.nexttrip.model.entity.car.CarEntity
+import com.example.nexttrip.model.entity.car.LocationEntity
+import com.example.nexttrip.model.entity.car.RouteEntity
 
 fun CarEntity.toCarDTO() = CarData(
     carId = carId,

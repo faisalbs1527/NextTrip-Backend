@@ -1,9 +1,8 @@
 package com.example.nexttrip.route
 
-import com.example.nexttrip.model.dto.BookingData
-import com.example.nexttrip.model.dto.CarData
-import com.example.nexttrip.model.dto.RequestForm
-import com.example.nexttrip.model.dto.TestData
+import com.example.nexttrip.model.dto.car.BookingData
+import com.example.nexttrip.model.dto.car.CarData
+import com.example.nexttrip.model.dto.car.RequestForm
 import com.example.nexttrip.repository.CarRepository
 import io.ktor.http.*
 import io.ktor.serialization.*

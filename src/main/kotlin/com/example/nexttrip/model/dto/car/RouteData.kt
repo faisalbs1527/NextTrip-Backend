@@ -1,4 +1,4 @@
-package com.example.nexttrip.model.dto
+package com.example.nexttrip.model.dto.car
 
 import kotlinx.serialization.Serializable
 

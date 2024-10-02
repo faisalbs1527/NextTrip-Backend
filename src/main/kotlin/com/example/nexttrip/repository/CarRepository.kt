@@ -1,8 +1,8 @@
 package com.example.nexttrip.repository
 
-import com.example.nexttrip.model.dto.BookingData
-import com.example.nexttrip.model.dto.CarData
-import com.example.nexttrip.model.dto.LocationData
+import com.example.nexttrip.model.dto.car.BookingData
+import com.example.nexttrip.model.dto.car.CarData
+import com.example.nexttrip.model.dto.car.LocationData
 
 interface CarRepository {
     fun getAllCars(): List<CarData>
