@@ -1,9 +1,11 @@
 package com.example.nexttrip.repository
 
 import com.example.nexttrip.model.dto.hotel.HotelReceiveData
+import com.example.nexttrip.model.dto.hotel.RoomData
 import com.example.nexttrip.model.entity.hotel.HotelEntity
 import com.example.nexttrip.model.entity.hotel.HotelServiceEntity
 import com.example.nexttrip.model.entity.hotel.ServiceEntity
+import com.example.nexttrip.model.tables.hotel.Services
 import com.example.nexttrip.model.toHotelEntity
 import com.example.nexttrip.model.toHotelReceiveDTO
 import com.example.nexttrip.model.toPolicyEntity
@@ -32,14 +34,15 @@ class HotelRepoImpl : HotelRepository {
                     }
                 }
                 val hotel = hotelReceiveData.toHotelEntity(startPriceActual, startPriceDiscount)
-                println(hotel)
                 hotelReceiveData.rooms.forEach {
                     it.toRoomEntity(hotel)
                 }
                 hotelReceiveData.policies.toPolicyEntity(hotel)
-                hotelReceiveData.complimentary_services.forEach {
-                    val serviceEntity = ServiceEntity.new {
-                        serviceName = it
+                hotelReceiveData.complimentary_services.forEach { service ->
+                    val serviceEntity = ServiceEntity.find {
+                        Services.service eq service
+                    }.firstOrNull() ?: ServiceEntity.new {
+                        serviceName = service
                     }
                     HotelServiceEntity.new {
                         this.hotel = hotel
@@ -49,11 +52,6 @@ class HotelRepoImpl : HotelRepository {
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
-            ex.cause?.let { cause ->
-                println(cause)
-                println(cause.message)
-            }
-
             throw ex
         }
     }
@@ -62,7 +60,7 @@ class HotelRepoImpl : HotelRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getRooms() {
+    override fun getRooms(hotelId: String): List<RoomData> {
         TODO("Not yet implemented")
     }
 }

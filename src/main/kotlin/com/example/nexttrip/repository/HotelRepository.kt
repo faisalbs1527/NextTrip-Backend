@@ -1,10 +1,11 @@
 package com.example.nexttrip.repository
 
 import com.example.nexttrip.model.dto.hotel.HotelReceiveData
+import com.example.nexttrip.model.dto.hotel.RoomData
 
 interface HotelRepository {
     fun getAllHotels(): List<HotelReceiveData>
     fun addHotel(hotelReceiveData: HotelReceiveData)
     fun getAvailableHotels()
-    fun getRooms()
+    fun getRooms(hotelId: String):List<RoomData>
 }

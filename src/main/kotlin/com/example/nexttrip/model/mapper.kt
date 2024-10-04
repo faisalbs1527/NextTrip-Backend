@@ -6,6 +6,7 @@ import com.example.nexttrip.model.dto.car.LocationData
 import com.example.nexttrip.model.dto.car.RouteData
 import com.example.nexttrip.model.dto.hotel.HotelReceiveData
 import com.example.nexttrip.model.dto.hotel.PolicyData
+import com.example.nexttrip.model.dto.hotel.ResponseHotel
 import com.example.nexttrip.model.dto.hotel.RoomData
 import com.example.nexttrip.model.entity.car.BookingEntity
 import com.example.nexttrip.model.entity.car.CarEntity
@@ -125,6 +126,24 @@ fun HotelEntity.toHotelReceiveDTO() = HotelReceiveData(
     policies = policies.toList().first().toPolicyDTO(),
     complimentary_services = services.toList().map { it.service.serviceName },
     rooms = rooms.toList().map { it.toRoomDTO() }
+)
+
+fun HotelEntity.toHotelResponse() = ResponseHotel(
+    hotelId = hotelId,
+    name = name,
+    location = location,
+    city = city,
+    latitude = latitude,
+    longitude = longitude,
+    rating = rating,
+    description = description,
+    checkInTime = checkInTime,
+    checkOutTime = checkOutTime,
+    startPriceActual = startPriceActual,
+    startPriceDiscount = startPriceDiscount,
+    imageUrl = imageUrl,
+    policies = policies.toList().first().toPolicyDTO(),
+    complimentaryServices = services.toList().map { it.service.serviceName }
 )
 
 fun RoomData.toRoomEntity(hotelEntity: HotelEntity) = RoomEntity.new {

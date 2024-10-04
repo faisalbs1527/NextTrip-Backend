@@ -82,10 +82,6 @@ class CarRepoImpl : CarRepository {
                 val toLoc = LocationEntity.find {
                     Location.id eq bookingData.toId
                 }.first()
-
-                println(bookedCar.carName)
-                println(fromLoc.name)
-                println(toLoc.name)
                 BookingEntity.new {
                     this.car = bookedCar
                     this.fromLocation = fromLoc
