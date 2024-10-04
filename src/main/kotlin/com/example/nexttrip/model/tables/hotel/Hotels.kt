@@ -16,5 +16,4 @@ object Hotels : IntIdTable("hotels") {
     val start_price_discount = integer("start_price_discount")
     val start_price_actual = integer("start_price_actual")
     val image_url = varchar("image_url", 255)
-
 }

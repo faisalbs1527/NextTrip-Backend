@@ -8,5 +8,5 @@ import org.jetbrains.exposed.dao.id.EntityID
 class ServiceEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<ServiceEntity>(Services)
 
-    var service by Services.service
+    var serviceName by Services.service
 }

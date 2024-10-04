@@ -3,7 +3,7 @@ package com.example.nexttrip.model.tables.hotel
 import org.jetbrains.exposed.dao.id.IntIdTable
 
 object Rooms : IntIdTable("rooms") {
-    val room_no = integer("room_id")
+    val room_no = varchar("room_id",20)
     val hotel_id = reference("hotel_id", Hotels)
     val room_type = varchar("room_type", 255)
     val capacity = integer("capacity")

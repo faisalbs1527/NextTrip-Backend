@@ -1,5 +1,6 @@
 package com.example.nexttrip.model.entity.hotel
 
+import com.example.nexttrip.model.entity.car.RouteEntity.Companion.referrersOn
 import com.example.nexttrip.model.tables.hotel.HotelService
 import com.example.nexttrip.model.tables.hotel.Hotels
 import com.example.nexttrip.model.tables.hotel.Policies
@@ -11,7 +12,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 class HotelEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<HotelEntity>(Hotels)
 
-    val hotelId by Hotels.hotel_id
+    var hotelId by Hotels.hotel_id
     var name by Hotels.name
     var location by Hotels.location
     var city by Hotels.city
@@ -25,7 +26,7 @@ class HotelEntity(id: EntityID<Int>) : IntEntity(id) {
     var startPriceActual by Hotels.start_price_actual
     var imageUrl by Hotels.image_url
 
-    val policies by PolicyEntity referencedOn Policies.hotel
-    val services by ServiceEntity via HotelService
-    val rooms by RoomEntity referencedOn Rooms.hotel_id
+    val policies by PolicyEntity referrersOn Policies.hotel
+    val services by HotelServiceEntity referrersOn  HotelService.hotel
+    val rooms by RoomEntity referrersOn  Rooms.hotel_id
 }

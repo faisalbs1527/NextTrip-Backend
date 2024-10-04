@@ -11,6 +11,5 @@ class PolicyEntity(id: EntityID<Int>) : IntEntity(id) {
     var cancellationPolicy by Policies.cancellation_policy
     var pets by Policies.pets
     var smoking by Policies.smoking
-
-    var hotel by HotelEntity referencedOn Policies.hotel
+    var hotel by HotelEntity referencedOn  Policies.hotel
 }
