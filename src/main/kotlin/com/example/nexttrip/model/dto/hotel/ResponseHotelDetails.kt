@@ -3,7 +3,7 @@ package com.example.nexttrip.model.dto.hotel
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseHotel(
+data class ResponseHotelDetails(
     val hotelId: String,
     val name: String,
     val location: String,

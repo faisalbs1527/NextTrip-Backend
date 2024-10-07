@@ -6,18 +6,16 @@ import com.example.nexttrip.model.dto.car.LocationData
 import com.example.nexttrip.model.dto.car.RouteData
 import com.example.nexttrip.model.dto.hotel.HotelReceiveData
 import com.example.nexttrip.model.dto.hotel.PolicyData
-import com.example.nexttrip.model.dto.hotel.ResponseHotel
+import com.example.nexttrip.model.dto.hotel.ResponseHotelDetails
 import com.example.nexttrip.model.dto.hotel.RoomData
 import com.example.nexttrip.model.entity.car.BookingEntity
 import com.example.nexttrip.model.entity.car.CarEntity
 import com.example.nexttrip.model.entity.car.LocationEntity
 import com.example.nexttrip.model.entity.car.RouteEntity
+import com.example.nexttrip.model.entity.hotel.AvailableHotelData
 import com.example.nexttrip.model.entity.hotel.HotelEntity
 import com.example.nexttrip.model.entity.hotel.PolicyEntity
 import com.example.nexttrip.model.entity.hotel.RoomEntity
-import com.example.nexttrip.model.entity.hotel.ServiceEntity
-import org.jetbrains.exposed.dao.Entity
-import org.jetbrains.exposed.dao.id.EntityID
 
 fun CarEntity.toCarDTO() = CarData(carId = carId,
     latitude = latitude,
@@ -128,7 +126,18 @@ fun HotelEntity.toHotelReceiveDTO() = HotelReceiveData(
     rooms = rooms.toList().map { it.toRoomDTO() }
 )
 
-fun HotelEntity.toHotelResponse() = ResponseHotel(
+fun HotelEntity.toAvailableHotelData() = AvailableHotelData(
+    hotelId = hotelId,
+    name = name,
+    location = location,
+    city = city,
+    rating = rating,
+    startPriceActual = startPriceActual,
+    startPriceDiscount = startPriceDiscount,
+    imageUrl = imageUrl
+)
+
+fun HotelEntity.toHotelResponse() = ResponseHotelDetails(
     hotelId = hotelId,
     name = name,
     location = location,

@@ -51,5 +51,21 @@ fun Route.routeHotel(hotelRepository: HotelRepository) {
                 call.respond(HttpStatusCode.InternalServerError, ex.message ?: "An unexpected error occurred.")
             }
         }
+        get("/{bookingId}") {
+            val bookingId = call.parameters["bookingId"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Invalid booking ID"
+            )
+            val availableHotels = hotelRepository.getAvailableHotels(bookingId)
+            call.respond(availableHotels)
+        }
+        get("/details/{hotelId}") {
+            val hotelId = call.parameters["hotelId"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Invalid From ID"
+            )
+            val hotelDetails = hotelRepository.getHotelDetails(hotelId)
+            call.respond(hotelDetails)
+        }
     }
 }

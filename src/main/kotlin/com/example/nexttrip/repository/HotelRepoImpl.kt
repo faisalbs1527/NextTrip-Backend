@@ -1,21 +1,20 @@
 package com.example.nexttrip.repository
 
 import com.example.nexttrip.exception.DuplicateEntryException
+import com.example.nexttrip.model.*
 import com.example.nexttrip.model.dto.hotel.BookingRequestBody
 import com.example.nexttrip.model.dto.hotel.HotelReceiveData
+import com.example.nexttrip.model.dto.hotel.ResponseHotelDetails
 import com.example.nexttrip.model.dto.hotel.RoomData
 import com.example.nexttrip.model.entity.hotel.*
 import com.example.nexttrip.model.tables.hotel.HotelBookingInfo
+import com.example.nexttrip.model.tables.hotel.Hotels
+import com.example.nexttrip.model.tables.hotel.RoomBooking
 import com.example.nexttrip.model.tables.hotel.Services
-import com.example.nexttrip.model.toHotelEntity
-import com.example.nexttrip.model.toHotelReceiveDTO
-import com.example.nexttrip.model.toPolicyEntity
-import com.example.nexttrip.model.toRoomEntity
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.sql.SQLIntegrityConstraintViolationException
 
 class HotelRepoImpl : HotelRepository {
     override fun getAllHotels(): List<HotelReceiveData> {
@@ -59,16 +58,41 @@ class HotelRepoImpl : HotelRepository {
         }
     }
 
-    override fun getAvailableHotels() {
-        TODO("Not yet implemented")
+    override fun getAvailableHotels(bookingId: Int): List<AvailableHotelData> {
+        return transaction {
+            HotelBookingEntity.findById(bookingId)
+                ?: throw NoSuchElementException("Booking with ID $bookingId does not exist.")
+
+            val hotels = HotelEntity.all().toList()
+            val roomInfo = RoomBookingEntity.find {
+                RoomBooking.bookingId eq bookingId
+            }
+
+            val availableHotels = hotels.filter { hotelEntity ->
+                checkAvailability(hotelEntity.rooms.toList(), roomInfo.toList())
+            }.map { it.toAvailableHotelData() }
+            availableHotels
+        }
+    }
+
+    override fun getHotelDetails(hotelId: String): ResponseHotelDetails {
+        return transaction {
+            val hotel = HotelEntity.find {
+                Hotels.hotel_id eq hotelId
+            }.firstOrNull()
+            if (hotel == null) {
+                throw NoSuchElementException("Hotel with ID $hotelId does not exist.")
+            }
+            hotel.toHotelResponse()
+        }
     }
 
     override fun getRooms(hotelId: String): List<RoomData> {
         TODO("Not yet implemented")
     }
 
-    override fun requestBooking(bookingRequestBody: BookingRequestBody) {
-        try {
+    override fun requestBooking(bookingRequestBody: BookingRequestBody): Int {
+        return try {
             transaction {
 
                 val existingBooking = HotelBookingEntity.find {
@@ -98,10 +122,25 @@ class HotelRepoImpl : HotelRepository {
                         child = it.child
                     }
                 }
+                bookingInfo.id.value
             }
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex
         }
     }
+}
+
+private fun checkAvailability(hotelRooms: List<RoomEntity>, bookingRooms: List<RoomBookingEntity>): Boolean {
+    for (roomX in bookingRooms) {
+        var isAvailable = false
+        for (roomY in hotelRooms) {
+            if (roomX.adult <= roomY.capacity && roomY.availability) {
+                isAvailable = true
+                break
+            }
+        }
+        if (!isAvailable) return false
+    }
+    return true
 }
