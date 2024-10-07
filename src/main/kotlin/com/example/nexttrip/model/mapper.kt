@@ -4,18 +4,14 @@ import com.example.nexttrip.model.dto.car.BookingData
 import com.example.nexttrip.model.dto.car.CarData
 import com.example.nexttrip.model.dto.car.LocationData
 import com.example.nexttrip.model.dto.car.RouteData
-import com.example.nexttrip.model.dto.hotel.HotelReceiveData
-import com.example.nexttrip.model.dto.hotel.PolicyData
-import com.example.nexttrip.model.dto.hotel.ResponseHotelDetails
-import com.example.nexttrip.model.dto.hotel.RoomData
+import com.example.nexttrip.model.dto.hotel.*
 import com.example.nexttrip.model.entity.car.BookingEntity
 import com.example.nexttrip.model.entity.car.CarEntity
 import com.example.nexttrip.model.entity.car.LocationEntity
 import com.example.nexttrip.model.entity.car.RouteEntity
-import com.example.nexttrip.model.entity.hotel.AvailableHotelData
-import com.example.nexttrip.model.entity.hotel.HotelEntity
-import com.example.nexttrip.model.entity.hotel.PolicyEntity
-import com.example.nexttrip.model.entity.hotel.RoomEntity
+import com.example.nexttrip.model.entity.hotel.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun CarEntity.toCarDTO() = CarData(carId = carId,
     latitude = latitude,
@@ -194,3 +190,50 @@ fun PolicyEntity.toPolicyDTO() = PolicyData(
     pets = pets,
     smoking = smoking
 )
+
+fun HotelBookingEntity.toHotelBookingDTO(hotelEntity: HotelEntity): ResponseBookingInfo {
+    val (paymentActual, paymentDiscount) = calculatePayment(selectedRooms.toList())
+    return ResponseBookingInfo(
+        hotelName = hotelEntity.name,
+        location = hotelEntity.location,
+        city = hotelEntity.city,
+        rating = hotelEntity.rating,
+        imageUrl = hotelEntity.imageUrl,
+        bookingDate = getCurrentDate(),
+        checkIn = checkInDate,
+        checkOut = checkOutDate,
+        guests = countGuests(selectedRooms.toList()),
+        noOfRooms = selectedRooms.toList().size,
+        paymentActual = paymentActual,
+        paymentDiscount = paymentDiscount
+    )
+}
+
+private fun getCurrentDate(): String {
+    val currentDateMillis = System.currentTimeMillis()
+    val date = Date(currentDateMillis)
+    val dateFormat = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
+    val formattedDate = dateFormat.format(date)
+    return formattedDate
+}
+
+private fun countGuests(rooms: List<RoomBookingEntity>): Int {
+    var guests = 0
+    rooms.forEach {
+        guests += it.adult
+        guests += it.child
+    }
+    return guests
+}
+
+private fun calculatePayment(rooms: List<RoomBookingEntity>): Pair<String, String> {
+    var paymentActual = 0
+    var paymentDiscount = 0
+    rooms.forEach { room ->
+        if (room.selectedRoom != null) {
+            paymentActual += room.selectedRoom!!.actualPrice
+            paymentDiscount += room.selectedRoom!!.discountPrice
+        }
+    }
+    return Pair(paymentActual.toString(), paymentDiscount.toString())
+}

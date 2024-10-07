@@ -66,10 +66,48 @@ fun Route.routeHotel(hotelRepository: HotelRepository) {
             )
             val hotelId = call.parameters["hotelId"] ?: return@get call.respond(
                 HttpStatusCode.BadRequest,
-                "Invalid From ID"
+                "Invalid hotel ID"
             )
-            val hotelDetails = hotelRepository.getHotelDetails(bookingId,hotelId)
+            val hotelDetails = hotelRepository.getHotelDetails(bookingId, hotelId)
             call.respond(hotelDetails)
+        }
+        get("/{bookingId}/rooms/{roomNo}") {
+            val bookingId = call.parameters["bookingId"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Invalid booking ID"
+            )
+            val roomNo = call.parameters["roomNo"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Invalid Room No"
+            )
+            val availableRooms = hotelRepository.getAvailableRooms(bookingId, roomNo)
+            call.respond(availableRooms)
+        }
+        post("/{bookingId}/rooms/{roomNo}/{selectedRoomId}") {
+            val bookingId = call.parameters["bookingId"]?.toIntOrNull()
+                ?: return@post call.respond(HttpStatusCode.BadRequest, "Invalid booking ID")
+
+            val roomNo = call.parameters["roomNo"]?.toIntOrNull()
+                ?: return@post call.respond(HttpStatusCode.BadRequest, "Invalid Room No")
+
+            val selectedRoomId = call.parameters["selectedRoomId"]
+                ?: return@post call.respond(HttpStatusCode.BadRequest, "Invalid Selected Room ID")
+
+            try {
+                hotelRepository.selectRoom(bookingId, roomNo, selectedRoomId)
+                call.respond(HttpStatusCode.NoContent)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                call.respond(HttpStatusCode.InternalServerError, ex.message ?: "An unexpected error occurred.")
+            }
+        }
+
+        get("/bookingdetails/{bookingId}") {
+            val bookingId = call.parameters["bookingId"]?.toIntOrNull()
+                ?: return@get call.respond(HttpStatusCode.BadRequest, "Invalid booking ID")
+
+            val bookingDetails = hotelRepository.getBookingDetails(bookingId)
+            call.respond(bookingDetails)
         }
     }
 }
