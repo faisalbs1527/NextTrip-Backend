@@ -13,7 +13,7 @@ class HotelBookingEntity(id: EntityID<Int>) : IntEntity(id) {
     var hotel by HotelBookingInfo.hotel
     var userID by HotelBookingInfo.userID
     var status by HotelBookingInfo.status
-    var location by HotelBookingInfo.status
+    var location by HotelBookingInfo.location
     var checkInDate by HotelBookingInfo.checkInDate
     var checkOutDate by HotelBookingInfo.checkOutDate
     var payment by HotelBookingInfo.payment

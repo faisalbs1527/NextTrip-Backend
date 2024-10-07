@@ -12,6 +12,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 fun Application.createTable() {
     transaction {
         SchemaUtils.create(Cars, Location, Routes, Bookings)
-        SchemaUtils.create(Hotels, Rooms, Services, Policies, HotelService)
+        SchemaUtils.create(Hotels, Rooms, Services, Policies, HotelService,HotelBookingInfo,RoomBooking)
     }
 }
