@@ -75,7 +75,7 @@ class HotelRepoImpl : HotelRepository {
         }
     }
 
-    override fun getHotelDetails(hotelId: String): ResponseHotelDetails {
+    override fun getHotelDetails(bookingId: Int, hotelId: String): ResponseHotelDetails {
         return transaction {
             val hotel = HotelEntity.find {
                 Hotels.hotel_id eq hotelId
@@ -83,6 +83,10 @@ class HotelRepoImpl : HotelRepository {
             if (hotel == null) {
                 throw NoSuchElementException("Hotel with ID $hotelId does not exist.")
             }
+            val hotelBookingInfo = HotelBookingEntity.findById(bookingId)
+                ?: throw NoSuchElementException("Booking with ID $bookingId does not exist.")
+            hotelBookingInfo.hotel = hotel.id
+
             hotel.toHotelResponse()
         }
     }

@@ -59,12 +59,16 @@ fun Route.routeHotel(hotelRepository: HotelRepository) {
             val availableHotels = hotelRepository.getAvailableHotels(bookingId)
             call.respond(availableHotels)
         }
-        get("/details/{hotelId}") {
+        get("/{bookingId}/{hotelId}//details") {
+            val bookingId = call.parameters["bookingId"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Invalid booking ID"
+            )
             val hotelId = call.parameters["hotelId"] ?: return@get call.respond(
                 HttpStatusCode.BadRequest,
                 "Invalid From ID"
             )
-            val hotelDetails = hotelRepository.getHotelDetails(hotelId)
+            val hotelDetails = hotelRepository.getHotelDetails(bookingId,hotelId)
             call.respond(hotelDetails)
         }
     }
