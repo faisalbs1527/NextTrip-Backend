@@ -2,6 +2,7 @@ package com.example.nexttrip.route
 
 import com.example.nexttrip.model.dto.hotel.BookingRequestBody
 import com.example.nexttrip.model.dto.hotel.HotelReceiveData
+import com.example.nexttrip.model.dto.hotel.RequestFormHotel
 import com.example.nexttrip.repository.HotelRepository
 import io.ktor.http.*
 import io.ktor.serialization.*
@@ -37,8 +38,8 @@ fun Route.routeHotel(hotelRepository: HotelRepository) {
         post("/requestbooking") {
             try {
                 val bookingInfo = call.receive<BookingRequestBody>()
-                hotelRepository.requestBooking(bookingInfo)
-                call.respond(HttpStatusCode.NoContent)
+                val response = hotelRepository.requestBooking(bookingInfo)
+                call.respond(HttpStatusCode.OK, response)
             } catch (ex: SQLIntegrityConstraintViolationException) {
                 call.respond(HttpStatusCode.Conflict, ex.message ?: "Unique constraint violation.")
             } catch (ex: IllegalStateException) {
@@ -94,8 +95,8 @@ fun Route.routeHotel(hotelRepository: HotelRepository) {
                 ?: return@post call.respond(HttpStatusCode.BadRequest, "Invalid Selected Room ID")
 
             try {
-                hotelRepository.selectRoom(bookingId, roomNo, selectedRoomId)
-                call.respond(HttpStatusCode.NoContent)
+                val response = hotelRepository.selectRoom(bookingId, roomNo, selectedRoomId)
+                call.respond(HttpStatusCode.OK, response)
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 call.respond(HttpStatusCode.InternalServerError, ex.message ?: "An unexpected error occurred.")
@@ -108,6 +109,17 @@ fun Route.routeHotel(hotelRepository: HotelRepository) {
 
             val bookingDetails = hotelRepository.getBookingDetails(bookingId)
             call.respond(bookingDetails)
+        }
+        post("/confirmbooking/{bookingId}") {
+            val bookingId = call.parameters["bookingId"]?.toIntOrNull()
+                ?: return@post call.respond(HttpStatusCode.BadRequest, "Invalid booking ID")
+            val response = hotelRepository.confirmBooking(bookingId)
+            call.respond(HttpStatusCode.OK, response)
+        }
+        post("/updatebooking") {
+            val requestBody = call.receive<RequestFormHotel>()
+            val response = hotelRepository.updateBooking(requestBody)
+            call.respond(HttpStatusCode.OK, response)
         }
     }
 }

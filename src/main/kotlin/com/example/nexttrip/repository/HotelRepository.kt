@@ -8,8 +8,10 @@ interface HotelRepository {
     fun addHotel(hotelReceiveData: HotelReceiveData)
     fun getAvailableHotels(bookingId: Int): List<AvailableHotelData>
     fun getHotelDetails(bookingId: Int, hotelId: String): ResponseHotelDetails
-    fun requestBooking(bookingRequestBody: BookingRequestBody): Int
+    fun requestBooking(bookingRequestBody: BookingRequestBody): BookingResponseBody
     fun getAvailableRooms(bookingId: Int, roomNo: Int): List<RoomData>
-    fun selectRoom(bookingId: Int, roomNo: Int, selectedRoomId: String)
+    fun selectRoom(bookingId: Int, roomNo: Int, selectedRoomId: String): BookingResponseBody
     fun getBookingDetails(bookingId: Int): ResponseBookingInfo
+    fun confirmBooking(bookingId: Int): BookingResponseBody
+    fun updateBooking(requestFormHotel: RequestFormHotel): BookingResponseBody
 }

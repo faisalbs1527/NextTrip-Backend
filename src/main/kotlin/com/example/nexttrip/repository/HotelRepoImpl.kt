@@ -2,7 +2,6 @@ package com.example.nexttrip.repository
 
 import com.example.nexttrip.exception.DuplicateEntryException
 import com.example.nexttrip.model.*
-import com.example.nexttrip.model.dto.car.BookingData
 import com.example.nexttrip.model.dto.hotel.*
 import com.example.nexttrip.model.entity.hotel.*
 import com.example.nexttrip.model.tables.hotel.HotelBookingInfo
@@ -90,7 +89,7 @@ class HotelRepoImpl : HotelRepository {
         }
     }
 
-    override fun requestBooking(bookingRequestBody: BookingRequestBody): Int {
+    override fun requestBooking(bookingRequestBody: BookingRequestBody): BookingResponseBody {
         return try {
             transaction {
 
@@ -121,7 +120,7 @@ class HotelRepoImpl : HotelRepository {
                         child = it.child
                     }
                 }
-                bookingInfo.id.value
+                BookingResponseBody(bookingId = bookingInfo.id.value, userId = bookingInfo.userID, message = "")
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -145,8 +144,8 @@ class HotelRepoImpl : HotelRepository {
         }
     }
 
-    override fun selectRoom(bookingId: Int, roomNo: Int, selectedRoomId: String) {
-        transaction {
+    override fun selectRoom(bookingId: Int, roomNo: Int, selectedRoomId: String): BookingResponseBody {
+        return transaction {
             val hotelBookingInfo = HotelBookingEntity.findById(bookingId)
                 ?: throw NoSuchElementException("Booking with ID $bookingId does not exist.")
 
@@ -156,6 +155,11 @@ class HotelRepoImpl : HotelRepository {
             val roomInfo = hotelBookingInfo.selectedRooms.find { it.roomNo == roomNo } ?: throw NotFoundException()
             roomInfo.selectedRoom = selectedRoom
             selectedRoom.availability = false
+            BookingResponseBody(
+                bookingId = hotelBookingInfo.id.value,
+                userId = hotelBookingInfo.userID,
+                message = "${selectedRoom.roomType} room successfully selected!!"
+            )
         }
     }
 
@@ -166,8 +170,43 @@ class HotelRepoImpl : HotelRepository {
             val selectedHotel = bookingDetails.hotel?.let { HotelEntity.findById(it) }
                 ?: throw NotFoundException()
             val response = bookingDetails.toHotelBookingDTO(selectedHotel)
-            bookingDetails.payment = response.paymentActual.toInt()
+            bookingDetails.payment = response.paymentDiscount.toInt()
             response
+        }
+    }
+
+    override fun confirmBooking(bookingId: Int): BookingResponseBody {
+        return try {
+            transaction {
+                val bookingDetails = HotelBookingEntity.findById(bookingId)
+                    ?: throw NoSuchElementException("Booking with ID $bookingId does not exist.")
+                bookingDetails.status = "Confirmed"
+                BookingResponseBody(
+                    bookingId = bookingDetails.id.value,
+                    userId = bookingDetails.userID,
+                    message = "Booking at ${bookingDetails.selectedRooms.first().selectedRoom?.hotel?.name} successfully confirmed!!"
+                )
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw ex
+        }
+    }
+
+    override fun updateBooking(requestFormHotel: RequestFormHotel): BookingResponseBody {
+        return transaction {
+            val hotelBookingInfo = HotelBookingEntity.findById(requestFormHotel.bookingId)
+                ?: throw NoSuchElementException("Booking with ID ${requestFormHotel.bookingId} does not exist.")
+
+            hotelBookingInfo.selectedRooms.forEach {
+                it.selectedRoom?.availability = true
+            }
+            hotelBookingInfo.status = requestFormHotel.status
+            BookingResponseBody(
+                bookingId = hotelBookingInfo.id.value,
+                userId = hotelBookingInfo.userID,
+                message = "Booking at ${hotelBookingInfo.selectedRooms.first().selectedRoom?.hotel?.name} successfully ${hotelBookingInfo.status}!!"
+            )
         }
     }
 }
