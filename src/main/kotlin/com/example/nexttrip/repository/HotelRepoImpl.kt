@@ -1,6 +1,5 @@
 package com.example.nexttrip.repository
 
-import com.example.nexttrip.exception.DuplicateEntryException
 import com.example.nexttrip.model.*
 import com.example.nexttrip.model.dto.hotel.*
 import com.example.nexttrip.model.entity.hotel.*
@@ -93,24 +92,22 @@ class HotelRepoImpl : HotelRepository {
         return try {
             transaction {
 
-                val existingBooking = HotelBookingEntity.find {
+                val bookingInfo = HotelBookingEntity.find {
                     (HotelBookingInfo.userID eq bookingRequestBody.userId) and
                             (HotelBookingInfo.checkInDate eq bookingRequestBody.checkIn) and
                             (HotelBookingInfo.checkOutDate eq bookingRequestBody.checkOut) and
                             (HotelBookingInfo.location eq bookingRequestBody.location) and
                             (HotelBookingInfo.status eq bookingRequestBody.status)
-                }.firstOrNull()
-
-                if (existingBooking != null) {
-                    throw DuplicateEntryException("A booking already exists with the same details.")
-                }
-                val bookingInfo = HotelBookingEntity.new {
+                }.firstOrNull() ?: HotelBookingEntity.new {
                     userID = bookingRequestBody.userId
                     checkInDate = bookingRequestBody.checkIn
                     checkOutDate = bookingRequestBody.checkOut
                     location = bookingRequestBody.location
                     status = bookingRequestBody.status
                 }
+                val existingRooms = RoomBookingEntity.find { RoomBooking.bookingId eq bookingInfo.id }
+
+                existingRooms.forEach { it.delete() }
 
                 bookingRequestBody.rooms.forEach {
                     RoomBookingEntity.new {
@@ -158,7 +155,7 @@ class HotelRepoImpl : HotelRepository {
             BookingResponseBody(
                 bookingId = hotelBookingInfo.id.value,
                 userId = hotelBookingInfo.userID,
-                message = "${selectedRoom.roomType} room successfully selected!!"
+                message = "${selectedRoom.roomType} successfully selected!!"
             )
         }
     }
