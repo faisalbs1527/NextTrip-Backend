@@ -1,8 +1,8 @@
 package com.example.nexttrip.repository
 
-import com.example.nexttrip.model.*
 import com.example.nexttrip.model.dto.hotel.*
 import com.example.nexttrip.model.entity.hotel.*
+import com.example.nexttrip.model.mapper.*
 import com.example.nexttrip.model.tables.hotel.HotelBookingInfo
 import com.example.nexttrip.model.tables.hotel.Hotels
 import com.example.nexttrip.model.tables.hotel.RoomBooking

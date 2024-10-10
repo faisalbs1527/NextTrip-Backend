@@ -1,6 +1,5 @@
 package com.example.nexttrip.repository
 
-import com.example.nexttrip.model.*
 import com.example.nexttrip.model.dto.car.BookingData
 import com.example.nexttrip.model.dto.car.CarData
 import com.example.nexttrip.model.dto.car.LocationData
@@ -8,6 +7,10 @@ import com.example.nexttrip.model.entity.car.BookingEntity
 import com.example.nexttrip.model.entity.car.CarEntity
 import com.example.nexttrip.model.entity.car.LocationEntity
 import com.example.nexttrip.model.entity.car.RouteEntity
+import com.example.nexttrip.model.mapper.toBookingDTO
+import com.example.nexttrip.model.mapper.toCarDTO
+import com.example.nexttrip.model.mapper.toCarEntity
+import com.example.nexttrip.model.mapper.toLocationDTO
 import com.example.nexttrip.model.tables.car.Cars
 import com.example.nexttrip.model.tables.car.Location
 import com.example.nexttrip.model.tables.car.Routes
