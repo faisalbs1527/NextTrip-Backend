@@ -39,3 +39,17 @@ fun BaggageData.toBaggageEntity(flightEntity: FlightEntity) = BaggageEntity.new 
     checkedAllowance = this@toBaggageEntity.checkedAllowance
     carryOnAllowance = this@toBaggageEntity.carryOnAllowance
 }
+
+fun FlightEntity.toFlightDataReceive() = FlightDataReceive(
+    flightNumber = flightNumber,
+    departureAirport = departureAirport,
+    arrivalAirport = arrivalAirport,
+    departureTime = departureTime,
+    arrivalTime = arrivalTime,
+    airline = airline,
+    departureGate = departureGate,
+    arrivalGate = arrivalGate,
+    pricing = pricing.toList().map { PricingDataReceive(it.classType, it.price, it.currency) },
+    seatPlan = seats.toList().map { SeatPlanDataReceive(it.seatNumber, it.classType, it.status) },
+    baggage = baggage.toList().map { BaggageData(it.checkedAllowance, it.carryOnAllowance) }.first()
+)
