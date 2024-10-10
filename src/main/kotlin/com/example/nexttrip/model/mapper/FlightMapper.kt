@@ -1,13 +1,7 @@
 package com.example.nexttrip.model.mapper
 
-import com.example.nexttrip.model.dto.flight.BaggageData
-import com.example.nexttrip.model.dto.flight.FlightDataReceive
-import com.example.nexttrip.model.dto.flight.PricingDataReceive
-import com.example.nexttrip.model.dto.flight.SeatPlanDataReceive
-import com.example.nexttrip.model.entity.flight.BaggageEntity
-import com.example.nexttrip.model.entity.flight.FlightEntity
-import com.example.nexttrip.model.entity.flight.PricingEntity
-import com.example.nexttrip.model.entity.flight.SeatEntity
+import com.example.nexttrip.model.dto.flight.*
+import com.example.nexttrip.model.entity.flight.*
 
 fun FlightDataReceive.toFlightEntity() = FlightEntity.new {
     flightNumber = this@toFlightEntity.flightNumber
@@ -53,3 +47,12 @@ fun FlightEntity.toFlightDataReceive() = FlightDataReceive(
     seatPlan = seats.toList().map { SeatPlanDataReceive(it.seatNumber, it.classType, it.status) },
     baggage = baggage.toList().map { BaggageData(it.checkedAllowance, it.carryOnAllowance) }.first()
 )
+
+fun FlightBookingRequest.toFlightBookingEntity() = FlightBookingEntity.new {
+    userID = this@toFlightBookingEntity.userId
+    status = this@toFlightBookingEntity.status
+    departureAirport = this@toFlightBookingEntity.departureAirport
+    arrivalAirport = this@toFlightBookingEntity.arrivalAirport
+    travelDate = this@toFlightBookingEntity.travelDate
+    classType = this@toFlightBookingEntity.classType
+}
