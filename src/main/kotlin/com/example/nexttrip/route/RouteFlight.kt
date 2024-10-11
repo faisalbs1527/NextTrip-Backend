@@ -51,5 +51,21 @@ fun Route.routeFlight(flightRepository: FlightRepository) {
                 call.respond(HttpStatusCode.InternalServerError, ex.message ?: "An unexpected error occurred.")
             }
         }
+        get("/oneway/{bookingId}") {
+            val bookingId = call.parameters["bookingId"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Invalid booking ID"
+            )
+            val availableFlights = flightRepository.getAvailableFlightsOneWay(bookingId)
+            call.respond(availableFlights)
+        }
+        get("/roundway/{bookingId}") {
+            val bookingId = call.parameters["bookingId"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Invalid booking ID"
+            )
+            val availableFlights = flightRepository.getAvailableFlightsBothWay(bookingId)
+            call.respond(availableFlights)
+        }
     }
 }

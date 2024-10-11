@@ -8,7 +8,8 @@ data class FlightBookingRequest(
     val status: String = "Pending",
     val departureAirport: String,
     val arrivalAirport: String,
-    val travelDate: String,
+    val departureDate: String,
+    val returnDate: String? = null,
     val classType: String,
     val flightType: String,
     val travellers: List<TravellerInfoRequest>

@@ -16,7 +16,8 @@ class FlightBookingEntity(id: EntityID<Int>) : IntEntity(id) {
     var status by FlightBookingInfo.status
     var departureAirport by FlightBookingInfo.departureAirport
     var arrivalAirport by FlightBookingInfo.arrivalAirport
-    var travelDate by FlightBookingInfo.travelDate
+    var departureDate by FlightBookingInfo.departureDate
+    var returnDate by FlightBookingInfo.returnDate
     var classType by FlightBookingInfo.classType
     var payment by FlightBookingInfo.payment
 

@@ -2,6 +2,9 @@ package com.example.nexttrip.model.mapper
 
 import com.example.nexttrip.model.dto.flight.*
 import com.example.nexttrip.model.entity.flight.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.Duration
 
 fun FlightDataReceive.toFlightEntity() = FlightEntity.new {
     flightNumber = this@toFlightEntity.flightNumber
@@ -53,6 +56,38 @@ fun FlightBookingRequest.toFlightBookingEntity() = FlightBookingEntity.new {
     status = this@toFlightBookingEntity.status
     departureAirport = this@toFlightBookingEntity.departureAirport
     arrivalAirport = this@toFlightBookingEntity.arrivalAirport
-    travelDate = this@toFlightBookingEntity.travelDate
+    departureDate = this@toFlightBookingEntity.departureDate
+    returnDate = this@toFlightBookingEntity.returnDate
     classType = this@toFlightBookingEntity.classType
+}
+
+fun FlightEntity.toFlightDataResponse(price: Double, classType: String) = FlightDetailsResponse(
+    flightNumber = flightNumber,
+    departureAirport = departureAirport,
+    arrivalAirport = arrivalAirport,
+    departureTime = departureTime,
+    arrivalTime = arrivalTime,
+    airline = airline,
+    departureGate = departureGate,
+    arrivalGate = arrivalGate,
+    price = price,
+    currency = pricing.first().currency,
+    classType = classType,
+    duration = getDuration(departureTime, arrivalTime),
+    baggage = baggage.toList().map { BaggageData(it.checkedAllowance, it.carryOnAllowance) }.first()
+)
+
+fun getDuration(startDateTime: String, endDateTime: String): String {
+    val formatter = DateTimeFormatter.ISO_DATE_TIME
+
+    val departureTime = LocalDateTime.parse(startDateTime, formatter)
+    val arrivalTime = LocalDateTime.parse(endDateTime, formatter)
+    val duration = Duration.between(departureTime, arrivalTime)
+    val hours = duration.toHours()
+    val minutes = duration.toMinutes() % 60
+
+    return buildString {
+        if (hours > 0) append("${hours}h ")
+        if (minutes > 0) append("${minutes}m")
+    }.trim()
 }

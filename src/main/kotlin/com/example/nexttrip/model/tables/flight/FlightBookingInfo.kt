@@ -8,7 +8,8 @@ object FlightBookingInfo : IntIdTable("flightbookingInfo") {
     val status = varchar("status", 20)
     val departureAirport = varchar("departure_airport", 5)
     val arrivalAirport = varchar("arrival_airport", 5)
-    val travelDate = varchar("travel_date",30)
-    val classType = varchar("class_type",10)
+    val departureDate = varchar("departure_date", 30)
+    val returnDate = varchar("return_Date", 30).nullable()
+    val classType = varchar("class_type", 10)
     val payment = integer("payment").nullable()
 }
