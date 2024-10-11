@@ -1,7 +1,6 @@
 package com.example.nexttrip.route
 
-import com.example.nexttrip.model.dto.flight.FlightBookingRequest
-import com.example.nexttrip.model.dto.flight.FlightDataReceive
+import com.example.nexttrip.model.dto.flight.*
 import com.example.nexttrip.repository.FlightRepository
 import io.ktor.http.*
 import io.ktor.serialization.*
@@ -66,6 +65,53 @@ fun Route.routeFlight(flightRepository: FlightRepository) {
             )
             val availableFlights = flightRepository.getAvailableFlightsBothWay(bookingId)
             call.respond(availableFlights)
+        }
+        post("/selectflight") {
+            try {
+                val requestFlightSelection = call.receive<FlightSelectionRequestBody>()
+                val response = flightRepository.selectFlight(requestFlightSelection)
+                call.respond(HttpStatusCode.OK, response)
+            } catch (ex: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, ex.message ?: "An unexpected error occurred.")
+            }
+        }
+        post("/{bookingId}/addtravellersinfo") {
+            try {
+                val bookingId = call.parameters["bookingId"]?.toIntOrNull() ?: return@post call.respond(
+                    HttpStatusCode.BadRequest,
+                    "Invalid booking ID"
+                )
+                val travellersInfo = call.receive<List<TravellerInfoRequest>>()
+                val response = flightRepository.addTravellersInfo(bookingId, travellersInfo)
+                call.respond(HttpStatusCode.OK, response)
+            } catch (ex: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, ex.message ?: "An unexpected error occurred.")
+            }
+        }
+        get("/{bookingId}/{returnSeats}") {
+            try {
+                val bookingId = call.parameters["bookingId"]?.toIntOrNull() ?: return@get call.respond(
+                    HttpStatusCode.BadRequest,
+                    "Invalid booking ID"
+                )
+                val returnSeats = call.parameters["returnSeats"]?.toBoolean() ?: return@get call.respond(
+                    HttpStatusCode.BadRequest,
+                    "Invalid request"
+                )
+                val seatList = flightRepository.getSeatList(bookingId, returnSeats)
+                call.respond(seatList)
+            } catch (ex: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, ex.message ?: "An unexpected error occurred.")
+            }
+        }
+        post("/selectseats") {
+            try {
+                val seatSelectionRequest = call.receive<SelectSeatRequest>()
+                val response = flightRepository.selectSeats(seatSelectionRequest)
+                call.respond(HttpStatusCode.OK, response)
+            } catch (ex: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, ex.message ?: "An unexpected error occurred.")
+            }
         }
     }
 }

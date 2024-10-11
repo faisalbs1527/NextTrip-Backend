@@ -1,8 +1,6 @@
 package com.example.nexttrip.repository
 
-import com.example.nexttrip.model.dto.flight.FlightBookingRequest
-import com.example.nexttrip.model.dto.flight.FlightDataReceive
-import com.example.nexttrip.model.dto.flight.FlightDetailsResponse
+import com.example.nexttrip.model.dto.flight.*
 import com.example.nexttrip.model.dto.hotel.BookingResponseBody
 
 interface FlightRepository {
@@ -11,9 +9,10 @@ interface FlightRepository {
     fun requestFlightBooking(flightBookingRequest: FlightBookingRequest): BookingResponseBody
     fun getAvailableFlightsOneWay(bookingId: Int): List<FlightDetailsResponse>
     fun getAvailableFlightsBothWay(bookingId: Int): List<Pair<FlightDetailsResponse, FlightDetailsResponse>>
-    fun addTravellersInfo(): BookingResponseBody
-    fun getAvailableSeats()
-    fun selectSeats(): BookingResponseBody
+    fun selectFlight(flightSelectionRequestBody: FlightSelectionRequestBody): BookingResponseBody
+    fun addTravellersInfo(bookingId: Int, travellers: List<TravellerInfoRequest>): BookingResponseBody
+    fun getSeatList(bookingId: Int, returnSeats: Boolean):List<SeatPlanData>
+    fun selectSeats(selectSeatRequest: SelectSeatRequest): BookingResponseBody
     fun getBookingDetails()
     fun confirmBooking(): BookingResponseBody
 }

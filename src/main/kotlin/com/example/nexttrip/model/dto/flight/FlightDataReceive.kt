@@ -13,6 +13,6 @@ data class FlightDataReceive(
     val departureGate: String,
     val arrivalGate: String,
     val pricing: List<PricingDataReceive>,
-    val seatPlan: List<SeatPlanDataReceive>,
+    val seatPlan: List<SeatPlanData>,
     val baggage: BaggageData
 )

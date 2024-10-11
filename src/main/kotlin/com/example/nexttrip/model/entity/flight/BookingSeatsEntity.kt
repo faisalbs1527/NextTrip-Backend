@@ -11,4 +11,5 @@ class BookingSeatsEntity(id: EntityID<Int>) : IntEntity(id) {
     var passengerNo by BookingSeats.passengerNo
     var bookingId by FlightBookingEntity referencedOn BookingSeats.bookingId
     var seatId by SeatEntity.optionalReferencedOn(BookingSeats.seatId)
+    var status by BookingSeats.status
 }

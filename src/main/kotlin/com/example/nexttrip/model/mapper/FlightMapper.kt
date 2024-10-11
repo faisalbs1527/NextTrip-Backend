@@ -24,7 +24,7 @@ fun PricingDataReceive.toPricingEntity(flightEntity: FlightEntity) = PricingEnti
     currency = this@toPricingEntity.currency
 }
 
-fun SeatPlanDataReceive.toSeatEntity(flightEntity: FlightEntity) = SeatEntity.new {
+fun SeatPlanData.toSeatEntity(flightEntity: FlightEntity) = SeatEntity.new {
     flightId = flightEntity.id
     seatNumber = this@toSeatEntity.seatNumber
     classType = this@toSeatEntity.classType
@@ -47,7 +47,7 @@ fun FlightEntity.toFlightDataReceive() = FlightDataReceive(
     departureGate = departureGate,
     arrivalGate = arrivalGate,
     pricing = pricing.toList().map { PricingDataReceive(it.classType, it.price, it.currency) },
-    seatPlan = seats.toList().map { SeatPlanDataReceive(it.seatNumber, it.classType, it.status) },
+    seatPlan = seats.toList().map { SeatPlanData(it.seatNumber, it.classType, it.status) },
     baggage = baggage.toList().map { BaggageData(it.checkedAllowance, it.carryOnAllowance) }.first()
 )
 
@@ -59,6 +59,7 @@ fun FlightBookingRequest.toFlightBookingEntity() = FlightBookingEntity.new {
     departureDate = this@toFlightBookingEntity.departureDate
     returnDate = this@toFlightBookingEntity.returnDate
     classType = this@toFlightBookingEntity.classType
+    flightType = this@toFlightBookingEntity.flightType
 }
 
 fun FlightEntity.toFlightDataResponse(price: Double, classType: String) = FlightDetailsResponse(
@@ -75,6 +76,10 @@ fun FlightEntity.toFlightDataResponse(price: Double, classType: String) = Flight
     classType = classType,
     duration = getDuration(departureTime, arrivalTime),
     baggage = baggage.toList().map { BaggageData(it.checkedAllowance, it.carryOnAllowance) }.first()
+)
+
+fun SeatEntity.toSeatPlanData() = SeatPlanData(
+    seatNumber, classType, status
 )
 
 fun getDuration(startDateTime: String, endDateTime: String): String {
