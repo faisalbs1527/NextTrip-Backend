@@ -81,7 +81,7 @@ fun Route.routeFlight(flightRepository: FlightRepository) {
                     HttpStatusCode.BadRequest,
                     "Invalid booking ID"
                 )
-                val travellersInfo = call.receive<List<TravellerInfoRequest>>()
+                val travellersInfo = call.receive<List<TravellerInfoData>>()
                 val response = flightRepository.addTravellersInfo(bookingId, travellersInfo)
                 call.respond(HttpStatusCode.OK, response)
             } catch (ex: Exception) {
@@ -109,6 +109,30 @@ fun Route.routeFlight(flightRepository: FlightRepository) {
                 val seatSelectionRequest = call.receive<SelectSeatRequest>()
                 val response = flightRepository.selectSeats(seatSelectionRequest)
                 call.respond(HttpStatusCode.OK, response)
+            } catch (ex: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, ex.message ?: "An unexpected error occurred.")
+            }
+        }
+        get("/bookingdetails/{bookingId}") {
+            try {
+                val bookingId = call.parameters["bookingId"]?.toIntOrNull() ?: return@get call.respond(
+                    HttpStatusCode.BadRequest,
+                    "Invalid booking ID"
+                )
+                val bookingDetails = flightRepository.getBookingDetails(bookingId)
+                call.respond(bookingDetails)
+            } catch (ex: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, ex.message ?: "An unexpected error occurred.")
+            }
+        }
+        post("/confirmbooking/{bookingId}") {
+            try {
+                val bookingId = call.parameters["bookingId"]?.toIntOrNull() ?: return@post call.respond(
+                    HttpStatusCode.BadRequest,
+                    "Invalid booking ID"
+                )
+                val response = flightRepository.confirmBooking(bookingId)
+                call.respond(response)
             } catch (ex: Exception) {
                 call.respond(HttpStatusCode.InternalServerError, ex.message ?: "An unexpected error occurred.")
             }

@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SelectSeatRequest(
     val bookingId: Int,
-    val roundWay: Boolean,
+    val returnSeat: Boolean,
     val selectedSeats: List<String>
 )

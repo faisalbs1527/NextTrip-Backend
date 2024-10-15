@@ -4,10 +4,7 @@ import com.example.nexttrip.model.dto.flight.*
 import com.example.nexttrip.model.dto.hotel.BookingResponseBody
 import com.example.nexttrip.model.entity.flight.*
 import com.example.nexttrip.model.mapper.*
-import com.example.nexttrip.model.tables.flight.BookingSeats
 import com.example.nexttrip.model.tables.flight.Flights
-import com.example.nexttrip.model.tables.flight.TravellerInfo
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -119,7 +116,7 @@ class FlightRepoImpl : FlightRepository {
         }
     }
 
-    override fun addTravellersInfo(bookingId: Int, travellers: List<TravellerInfoRequest>): BookingResponseBody {
+    override fun addTravellersInfo(bookingId: Int, travellers: List<TravellerInfoData>): BookingResponseBody {
         return try {
             transaction {
                 val bookingDetails = FlightBookingEntity.findById(bookingId)
@@ -178,7 +175,7 @@ class FlightRepoImpl : FlightRepository {
                 val bookingDetails = FlightBookingEntity.findById(selectSeatRequest.bookingId)
                     ?: throw NoSuchElementException("Booking with ID ${selectSeatRequest.bookingId} does not exist.")
 
-                if (selectSeatRequest.roundWay) {
+                if (selectSeatRequest.returnSeat) {
                     val selectedFlight = FlightEntity.findById(bookingDetails.returnFlight!!)
                     var seatNo = 1
                     selectSeatRequest.selectedSeats.forEach { seatX ->
@@ -189,17 +186,26 @@ class FlightRepoImpl : FlightRepository {
                         }?.seatId = seatY
                         seatNo++
                     }
+                    val price = selectedFlight?.pricing?.find { it.classType == bookingDetails.classType }?.price
+                    if (price != null) {
+                        bookingDetails.payment = bookingDetails.payment!! + price.toInt().times((seatNo - 1))
+                    }
                 } else {
                     val selectedFlight = FlightEntity.findById(bookingDetails.departureFlight!!)
                     var seatNo = 1
+                    bookingDetails.payment = 0
                     selectSeatRequest.selectedSeats.forEach { seatX ->
                         val seatY = selectedFlight?.seats?.find { it.seatNumber == seatX }
                         seatY?.status = "Booked"
                         bookingDetails.selectedSeats.find {
-                            (it.passengerNo == seatNo) && (it.status == "Return")
+                            (it.passengerNo == seatNo) && (it.status == "Departure")
                         }?.seatId = seatY
+                        seatNo++
                     }
-                    seatNo++
+                    val price = selectedFlight?.pricing?.find { it.classType == bookingDetails.classType }?.price
+                    if (price != null) {
+                        bookingDetails.payment = bookingDetails.payment!! + price.toInt().times((seatNo - 1))
+                    }
                 }
                 BookingResponseBody(
                     bookingId = bookingDetails.id.value,
@@ -213,12 +219,36 @@ class FlightRepoImpl : FlightRepository {
         }
     }
 
-    override fun getBookingDetails() {
-        TODO("Not yet implemented")
+    override fun getBookingDetails(bookingId: Int): FlightBookingResponse {
+        return try {
+            transaction {
+                val bookingDetails = FlightBookingEntity.findById(bookingId)
+                    ?: throw NoSuchElementException("Booking with ID $bookingId does not exist.")
+                bookingDetails.toBookingResponse()
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw ex
+        }
     }
 
-    override fun confirmBooking(): BookingResponseBody {
-        TODO("Not yet implemented")
+    override fun confirmBooking(bookingId: Int): BookingResponseBody {
+        return try {
+            transaction {
+                val bookingDetails = FlightBookingEntity.findById(bookingId)
+                    ?: throw NoSuchElementException("Booking with ID $bookingId does not exist.")
+
+                bookingDetails.status = "Confirm"
+                BookingResponseBody(
+                    bookingId = bookingDetails.id.value,
+                    userId = bookingDetails.userID,
+                    message = "Flight booking confirmed!!"
+                )
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw ex
+        }
     }
 }
 

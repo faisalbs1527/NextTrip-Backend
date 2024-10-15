@@ -1,6 +1,5 @@
 package com.example.nexttrip.model.entity.flight
 
-import com.example.nexttrip.model.entity.flight.FlightBookingEntity.Companion.referrersOn
 import com.example.nexttrip.model.tables.flight.BookingSeats
 import com.example.nexttrip.model.tables.flight.FlightBookingInfo
 import com.example.nexttrip.model.tables.flight.TravellerInfo

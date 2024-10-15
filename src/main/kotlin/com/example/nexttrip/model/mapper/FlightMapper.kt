@@ -2,6 +2,7 @@ package com.example.nexttrip.model.mapper
 
 import com.example.nexttrip.model.dto.flight.*
 import com.example.nexttrip.model.entity.flight.*
+import org.jetbrains.exposed.dao.id.EntityID
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.Duration
@@ -77,6 +78,54 @@ fun FlightEntity.toFlightDataResponse(price: Double, classType: String) = Flight
     duration = getDuration(departureTime, arrivalTime),
     baggage = baggage.toList().map { BaggageData(it.checkedAllowance, it.carryOnAllowance) }.first()
 )
+
+fun FlightBookingEntity.toBookingResponse() =
+    FlightBookingResponse(
+        departureFlight = getFlight(departureFlight, classType)!!,
+        returnFlight = getFlight(returnFlight, classType),
+        userId = userID,
+        departureAirport = departureAirport,
+        arrivalAirport = arrivalAirport,
+        departureDate = departureDate,
+        returnDate = returnDate,
+        classType = classType,
+        flightType = flightType,
+        payment = payment ?: 0,
+        travellers = travellers.toList().map { it.toTravellerData() },
+        selectedSeatsDeparture = getSeats(selectedSeats.toList(), false)!!,
+        selectedSeatsReturn = getSeats(selectedSeats.toList(), true)
+    )
+
+fun TravellerInfoEntity.toTravellerData() = TravellerInfoData(
+    type, typeNo, title, firstName, lastName, dateOfBirth
+)
+
+fun getSeats(selectedSeats: List<BookingSeatsEntity>, returnSeat: Boolean): String? {
+    var seats = ""
+    selectedSeats.map {
+        if (returnSeat) {
+            if (it.status == "Return") {
+                seats += "-${it.seatId?.seatNumber}"
+            }
+        } else {
+            if (it.status == "Departure") {
+                seats += "-${it.seatId?.seatNumber}"
+            }
+        }
+    }
+    if (seats.isEmpty()) return null
+    return seats.substring(1)
+}
+
+fun getFlight(flightId: EntityID<Int>?, classType: String): FlightDetailsResponse? {
+    val flight = flightId?.let { FlightEntity.findById(it) }
+    if (flight != null) {
+        val price = flight.pricing.find { it.classType == classType }?.price
+        return flight.toFlightDataResponse(price!!, classType)
+    } else {
+        return null
+    }
+}
 
 fun SeatEntity.toSeatPlanData() = SeatPlanData(
     seatNumber, classType, status

@@ -10,9 +10,9 @@ interface FlightRepository {
     fun getAvailableFlightsOneWay(bookingId: Int): List<FlightDetailsResponse>
     fun getAvailableFlightsBothWay(bookingId: Int): List<Pair<FlightDetailsResponse, FlightDetailsResponse>>
     fun selectFlight(flightSelectionRequestBody: FlightSelectionRequestBody): BookingResponseBody
-    fun addTravellersInfo(bookingId: Int, travellers: List<TravellerInfoRequest>): BookingResponseBody
-    fun getSeatList(bookingId: Int, returnSeats: Boolean):List<SeatPlanData>
+    fun addTravellersInfo(bookingId: Int, travellers: List<TravellerInfoData>): BookingResponseBody
+    fun getSeatList(bookingId: Int, returnSeats: Boolean): List<SeatPlanData>
     fun selectSeats(selectSeatRequest: SelectSeatRequest): BookingResponseBody
-    fun getBookingDetails()
-    fun confirmBooking(): BookingResponseBody
+    fun getBookingDetails(bookingId: Int): FlightBookingResponse
+    fun confirmBooking(bookingId: Int): BookingResponseBody
 }
